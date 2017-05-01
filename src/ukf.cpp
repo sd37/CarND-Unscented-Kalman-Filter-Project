@@ -82,8 +82,16 @@ UKF::UKF() {
     P_ = MatrixXd(5, 5);
 
     NIS_laser_ = -1;
-    NIS_radar_ = -1;
 
+    R_lidar_ = MatrixXd(2, 2);
+    R_lidar_ << std_laspx_ * std_laspx_, 0,
+            0, std_laspy_ * std_laspy_;
+
+    NIS_radar_ = -1;
+    R_radar_ = MatrixXd(3, 3);
+    R_radar_ << std_radr_ * std_radr_, 0, 0,
+            0, std_radphi_ * std_radphi_, 0,
+            0, 0, std_radrd_ * std_radrd_;
 }
 
 UKF::~UKF() {}
