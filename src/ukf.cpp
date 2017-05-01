@@ -120,6 +120,63 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     Complete this function! Make sure you switch between lidar and radar
     measurements.
     */
+
+    float px, py, vx, vy, v;
+    float rho, phi, rhodot;
+
+
+    /*****************************************************************************
+     *  Initialization
+     ****************************************************************************/
+    if (!is_initialized_) {
+        if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+            /**
+                Convert radar from polar to cartesian coordinates and initialize state.
+            */
+            rho = meas_package.raw_measurements_(0);
+            phi = meas_package.raw_measurements_(1);
+            rhodot = meas_package.raw_measurements_(2);
+
+            px = rho * cos(phi);
+            py = rho * sin(phi);
+            vx = rhodot * cos(phi);
+            vy = rhodot * sin(phi);
+            v = sqrt(vx * vx + vy * vy);
+
+            x_ << px, py, v, 0, 0;
+
+        } else if(meas_package.sensor_type_ == MeasurementPackage::LASER) {
+            // intialize state
+            x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0.0, 0.0, 0.0;
+        }
+
+        // previous measurement timestamp.
+        time_us_ = meas_package.timestamp_;
+
+        // done initializing, no need to predict or update
+        is_initialized_ = true;
+        return;
+    }
+
+    //compute the time elapsed between the current and previous measurements
+    float dt = (meas_package.timestamp_ - time_us_) / 1000000.0;    //dt - expressed in seconds
+    time_us_ = meas_package.timestamp_;
+
+    Prediction(dt);
+
+    if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+        if(!use_radar_) {
+            return;
+        }
+        UpdateRadar(meas_package);
+
+    } else {
+       // Laser Updates
+        if(!use_laser_) {
+            return;
+        }
+        UpdateLidar(meas_package);
+    }
 }
 
 /**
