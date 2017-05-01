@@ -74,6 +74,9 @@ public:
   ///* the current NIS for laser
   double NIS_laser_;
 
+  ///* total number of sigma points
+  int total_sigma_points_;
+
   /**
    * Constructor
    */
