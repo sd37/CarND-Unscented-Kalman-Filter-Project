@@ -72,6 +72,14 @@ UKF::UKF() {
 
     weights_ = VectorXd(total_sigma_points_);
 
+    // set weights
+    double weight_0 = lambda_ / (lambda_ + n_aug_);
+    weights_(0) = weight_0;
+    for (int i = 1; i < total_sigma_points_; i++) {
+        double weight = 0.5 / (n_aug_ + lambda_);
+        weights_(i) = weight;
+    }
+
     Xsig_pred_ = MatrixXd(n_x_, n_aug_);
 
 
@@ -80,6 +88,11 @@ UKF::UKF() {
 
     // initial covariance matrix
     P_ = MatrixXd(5, 5);
+    P_ << 1, 0, 0, 0, 0,
+            0, 1, 0, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 0, 1, 0,
+            0, 0, 0, 0, 1;
 
     NIS_laser_ = -1;
 
