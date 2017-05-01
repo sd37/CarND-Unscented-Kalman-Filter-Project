@@ -77,10 +77,10 @@ public:
     ///* total number of sigma points
     int total_sigma_points_;
 
-    ///* Lidar measurement noise covariance matrix
+    ///* measurement noise covariance matrix for lidar
     MatrixXd R_lidar_;
 
-    ///* Radar measurement noise covariance matrix
+    ///* measurement noise covariance matrix for radar
     MatrixXd R_radar_;
 
     /**
