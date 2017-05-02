@@ -80,7 +80,7 @@ UKF::UKF() {
         weights_(i) = weight;
     }
 
-    Xsig_pred_ = MatrixXd(n_x_, n_aug_);
+    Xsig_pred_ = MatrixXd(n_x_, total_sigma_points_);
 
     P_ << 1, 0, 0, 0, 0,
             0, 1, 0, 0, 0,
@@ -224,7 +224,7 @@ void UKF::Prediction(double delta_t) {
     // Just pass in through the process model.
     //
 
-    for (int i = 0; i < 2 * n_aug_ + 1; i++) {
+    for (int i = 0; i < total_sigma_points_; i++) {
         //extract values for better readability
         double p_x = Xsig_aug(0, i);
         double p_y = Xsig_aug(1, i);
@@ -402,7 +402,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     MatrixXd Zsig = MatrixXd(n_z, total_sigma_points_);
 
     //transform sigma points into measurement space
-    for (int i = 0; total_sigma_points_; i++) {  //2n+1 simga points
+    for (int i = 0; i < total_sigma_points_; i++) {  //2n+1 simga points
 
         // extract values for better readibility
         double p_x = Xsig_pred_(0, i);
